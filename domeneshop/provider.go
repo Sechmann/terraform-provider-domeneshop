@@ -3,9 +3,10 @@ package domeneshop
 import (
 	"context"
 	"encoding/base64"
-	domeneshopapi "github.com/VegarM/domeneshop-go"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
+	"net/http"
+	"time"
 )
 
 // Provider -
@@ -27,12 +28,13 @@ func Provider() *schema.Provider {
 		ResourcesMap: map[string]*schema.Resource{},
 		DataSourcesMap: map[string]*schema.Resource{
 			"domeneshop_domains": dataSourceDomains(),
+			"domeneshop_dns":     dataSourceDNS(),
 		},
 		ConfigureContextFunc: providerConfigure,
 	}
 }
 
-func providerConfigure(ctx context.Context, d *schema.ResourceData) (interface{}, diag.Diagnostics) {
+func providerConfigure(_ context.Context, d *schema.ResourceData) (interface{}, diag.Diagnostics) {
 	token := d.Get("token").(string)
 	secret := d.Get("secret").(string)
 
@@ -58,12 +60,29 @@ func providerConfigure(ctx context.Context, d *schema.ResourceData) (interface{}
 		return nil, diags
 	}
 
-	cfg := domeneshopapi.NewConfiguration()
-	cfg.AddDefaultHeader("Authorization", basicAuth(token, secret))
-
-	client := domeneshopapi.NewAPIClient(cfg)
+	client := &http.Client{
+		Timeout: 20 * time.Second,
+		Transport: &AddHeaderTransport{
+			T: http.DefaultTransport,
+			Headers: map[string]string{
+				"Authorization": basicAuth(token, secret),
+			},
+		},
+	}
 
 	return client, diags
+}
+
+type AddHeaderTransport struct {
+	T       http.RoundTripper
+	Headers map[string]string
+}
+
+func (adt *AddHeaderTransport) RoundTrip(req *http.Request) (*http.Response, error) {
+	for key, value := range adt.Headers {
+		req.Header.Add(key, value)
+	}
+	return adt.T.RoundTrip(req)
 }
 
 func basicAuth(username, password string) string {

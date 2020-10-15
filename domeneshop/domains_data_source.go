@@ -2,9 +2,11 @@ package domeneshop
 
 import (
 	"context"
-	domeneshopapi "github.com/VegarM/domeneshop-go"
+	"encoding/json"
 	"log"
+	"net/http"
 	"strconv"
+	"terraform-provider-domeneshop/domeneshop/model"
 	"time"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
@@ -81,9 +83,16 @@ func dataSourceDomains() *schema.Resource {
 func dataSourceDomainsRead(ctx context.Context, data *schema.ResourceData, providerClient interface{}) diag.Diagnostics {
 	var diags diag.Diagnostics
 
-	client := providerClient.(*domeneshopapi.APIClient)
+	client := providerClient.(*http.Client)
 
-	domains, response, err := client.DomainsApi.GetDomains(ctx, nil)
+	response, err := client.Get("https://api.domeneshop.no/v0/domains")
+	if err != nil {
+		return diag.FromErr(err)
+	}
+
+	defer response.Body.Close()
+	var domains []model.Domain
+	err = json.NewDecoder(response.Body).Decode(&domains)
 	if err != nil {
 		return diag.FromErr(err)
 	}
@@ -102,7 +111,7 @@ func dataSourceDomainsRead(ctx context.Context, data *schema.ResourceData, provi
 	return diags
 }
 
-func flattenDomains(domains *[]domeneshopapi.Domain) []interface{} {
+func flattenDomains(domains *[]model.Domain) []interface{} {
 	if domains != nil {
 		flatDomains := make([]interface{}, len(*domains), len(*domains))
 
