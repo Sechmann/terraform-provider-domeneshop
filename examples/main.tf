@@ -14,10 +14,9 @@ data "domeneshop_domains" "all" {
 
 data "domeneshop_dns" "all" {
   for_each = toset([for domain in data.domeneshop_domains.all.domains: tostring(domain.id)])
-  domain_id = tonumber(each.value)
+  domain_id = tonumber(each.key)
 }
 
-# Returns all coffees
 output "all_domains" {
   value = data.domeneshop_domains.all
 }
