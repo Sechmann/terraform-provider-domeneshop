@@ -22,9 +22,9 @@ type DnsRecord struct {
 	// Freeform text field.
 	Data string `json:"data"`
 	// SRV record priority, also known as preference. Lower values are usually preferred first
-	Priority string `json:"priority"`
+	Priority string `json:"priority,omitempty"`
 	// SRV record weight. Relevant if multiple records have same preference
-	Weight int `json:"weight"`
+	Weight int `json:"weight,omitempty"`
 	// SRV record port. The port where the service is found.
-	Port int `json:"port"`
+	Port int `json:"port,omitempty"`
 }

@@ -25,7 +25,9 @@ func Provider() *schema.Provider {
 				DefaultFunc: schema.EnvDefaultFunc("DOMENESHOP_SECRET", nil),
 			},
 		},
-		ResourcesMap: map[string]*schema.Resource{},
+		ResourcesMap: map[string]*schema.Resource{
+			"domeneshop_dns_record": resourceDNSRecord(),
+		},
 		DataSourcesMap: map[string]*schema.Resource{
 			"domeneshop_domains": dataSourceDomains(),
 			"domeneshop_dns":     dataSourceDNS(),

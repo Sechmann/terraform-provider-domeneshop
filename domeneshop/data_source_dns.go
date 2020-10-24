@@ -106,29 +106,32 @@ func dataSourceDNSRead(ctx context.Context, data *schema.ResourceData, providerC
 	return diags
 }
 
+func flattenDNSRecord(record *model.DnsRecord) interface{} {
+	flatRecord := make(map[string]interface{})
+
+	flatRecord["id"] = record.Id
+	flatRecord["host"] = record.Host
+	flatRecord["ttl"] = record.Ttl
+	flatRecord["type"] = record.Type
+	flatRecord["data"] = record.Data
+
+	switch record.Type {
+	case "MX":
+		flatRecord["priority"] = record.Priority
+	case "SRV":
+		flatRecord["priority"] = record.Priority
+		flatRecord["weight"] = record.Weight
+		flatRecord["port"] = record.Port
+	}
+	return flatRecord
+}
+
 func flattenDNSRecords(records *[]model.DnsRecord) []interface{} {
 	if records != nil {
 		flatRecords := make([]interface{}, len(*records), len(*records))
 
 		for i, record := range *records {
-			flatRecord := make(map[string]interface{})
-
-			flatRecord["id"] = record.Id
-			flatRecord["host"] = record.Host
-			flatRecord["ttl"] = record.Ttl
-			flatRecord["type"] = record.Type
-			flatRecord["data"] = record.Data
-
-			switch record.Type {
-			case "MX":
-				flatRecord["priority"] = record.Priority
-			case "SRV":
-				flatRecord["priority"] = record.Priority
-				flatRecord["weight"] = record.Weight
-				flatRecord["port"] = record.Port
-			}
-
-			flatRecords[i] = flatRecord
+			flatRecords[i] = flattenDNSRecord(&record)
 		}
 
 		return flatRecords
