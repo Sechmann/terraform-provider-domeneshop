@@ -30,8 +30,6 @@ func Provider() *schema.Provider {
 		},
 		DataSourcesMap: map[string]*schema.Resource{
 			"domeneshop_domain": dataSourceDomain(),
-			"domeneshop_domains": dataSourceDomains(),
-			"domeneshop_dns":     dataSourceDNS(),
 		},
 		ConfigureContextFunc: providerConfigure,
 	}
