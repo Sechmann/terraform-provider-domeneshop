@@ -164,8 +164,8 @@ func resourceDNSRecordRead(ctx context.Context, d *schema.ResourceData, m interf
 				diags = append(diags, diag.FromErr(err)...)
 			}
 		}
-		
-		if diags != nil && diags.HasError(){
+
+		if diags != nil && diags.HasError() {
 			return diags
 		}
 	} else {

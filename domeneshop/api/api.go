@@ -18,6 +18,6 @@ func Domains() string {
 	return fmt.Sprintf("%s/domains", apiURL)
 }
 
-func Domain(domainId  int) string {
+func Domain(domainId int) string {
 	return fmt.Sprintf("%s/%d", Domains(), domainId)
 }

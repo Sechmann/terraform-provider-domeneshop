@@ -17,7 +17,7 @@ type Aaaa struct {
 	// The host/subdomain the DNS record applies to
 	Host string `json:"host"`
 	// TTL of DNS record in seconds. Must be a multiple of 60.
-	Ttl  int  `json:"ttl,omitempty"`
+	Ttl  int    `json:"ttl,omitempty"`
 	Type string `json:"type"`
 	// IPv6 address
 	Data string `json:"data"`
