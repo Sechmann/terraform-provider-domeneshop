@@ -29,6 +29,7 @@ func Provider() *schema.Provider {
 			"domeneshop_dns_record": resourceDNSRecord(),
 		},
 		DataSourcesMap: map[string]*schema.Resource{
+			"domeneshop_domain": dataSourceDomain(),
 			"domeneshop_domains": dataSourceDomains(),
 			"domeneshop_dns":     dataSourceDNS(),
 		},

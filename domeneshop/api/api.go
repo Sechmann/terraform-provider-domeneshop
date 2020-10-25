@@ -7,9 +7,17 @@ const (
 )
 
 func DNSRecords(domainId int) string {
-	return fmt.Sprintf("%s/domains/%d/dns", apiURL, domainId)
+	return fmt.Sprintf("%s/domains/%d/dns", Domains(), domainId)
 }
 
 func DNSRecord(domainId, recordId int) string {
 	return fmt.Sprintf("%s/%d", DNSRecords(domainId), recordId)
+}
+
+func Domains() string {
+	return fmt.Sprintf("%s/domains", apiURL)
+}
+
+func Domain(domainId  int) string {
+	return fmt.Sprintf("%s/%d", Domains(), domainId)
 }
